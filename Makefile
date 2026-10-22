@@ -1,6 +1,8 @@
 APP_NAME := Headroom
 BUILD_DIR := build
-APP_PATH := $(BUILD_DIR)/Build/Products/Release/$(APP_NAME).app
+# The .noindex suffix keeps Spotlight from listing build copies of the app.
+DERIVED_DATA := $(BUILD_DIR)/DerivedData.noindex
+APP_PATH := $(DERIVED_DATA)/Build/Products/Release/$(APP_NAME).app
 
 .PHONY: build test run install zip release clean
 
@@ -10,7 +12,7 @@ build:
 		-scheme $(APP_NAME) \
 		-configuration Release \
 		-destination 'generic/platform=macOS' \
-		-derivedDataPath $(BUILD_DIR) \
+		-derivedDataPath $(DERIVED_DATA) \
 		build
 
 test:
@@ -18,7 +20,7 @@ test:
 		-project $(APP_NAME).xcodeproj \
 		-scheme $(APP_NAME) \
 		-destination 'platform=macOS' \
-		-derivedDataPath $(BUILD_DIR) \
+		-derivedDataPath $(DERIVED_DATA) \
 		test
 
 run: build

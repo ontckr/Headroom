@@ -14,7 +14,9 @@ set -euo pipefail
 NOTARY_PROFILE="${NOTARY_PROFILE:-headroom}"
 
 BUILD_DIR="build/release"
-APP="$BUILD_DIR/Build/Products/Release/Headroom.app"
+# The .noindex suffix keeps Spotlight from listing this copy of the app.
+DERIVED_DATA="$BUILD_DIR/DerivedData.noindex"
+APP="$DERIVED_DATA/Build/Products/Release/Headroom.app"
 ZIP="$BUILD_DIR/Headroom.zip"
 RESULT="$BUILD_DIR/notarization.json"
 
@@ -26,7 +28,7 @@ xcodebuild -quiet \
     -scheme Headroom \
     -configuration Release \
     -destination 'generic/platform=macOS' \
-    -derivedDataPath "$BUILD_DIR" \
+    -derivedDataPath "$DERIVED_DATA" \
     CODE_SIGN_STYLE=Manual \
     CODE_SIGN_IDENTITY="Developer ID Application" \
     DEVELOPMENT_TEAM="$TEAM_ID" \
