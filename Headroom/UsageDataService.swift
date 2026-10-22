@@ -1,10 +1,11 @@
 import Foundation
 import Observation
+import os
 
 /// Reads the usage history the Claude desktop app keeps on disk.
 ///
 /// Claude periodically records plan usage to `plan-usage-history.json`. This
-/// service reads the newest sample from that file and watches it for changes.
+/// service reads the samples from that file and watches it for changes.
 /// It makes no network requests and consumes no tokens.
 @Observable
 final class UsageDataService {
@@ -15,13 +16,19 @@ final class UsageDataService {
 
     private static let fiveHourWindow: TimeInterval = 5 * 60 * 60
     private static let weeklyWindow: TimeInterval = 7 * 24 * 60 * 60
+    private static let monthlyWindow: TimeInterval = 31 * 24 * 60 * 60
     private static let refreshInterval: TimeInterval = 60
 
-    /// The most recent sample recorded by the Claude app.
-    private(set) var latestSample: UsageSample?
+    /// Every sample in the file, newest first.
+    private(set) var samples: [UsageSample] = []
     /// A human-readable reason when the file cannot be read.
     private(set) var errorMessage: String?
 
+    @ObservationIgnored
+    private let logger = Logger(
+        subsystem: "io.github.ontckr.Headroom",
+        category: "UsageData"
+    )
     private let fileURL: URL
     private var fileMonitor: DispatchSourceFileSystemObject?
     private var refreshTimer: Timer?
@@ -42,19 +49,24 @@ final class UsageDataService {
         fileMonitor?.cancel()
     }
 
+    /// The most recent sample recorded by the Claude app.
+    var latestSample: UsageSample? {
+        samples.first
+    }
+
     /// Five-hour usage, or `nil` if that window has reset since the last sync.
     var fiveHourPercent: Int? {
-        currentValue(\.fh, window: Self.fiveHourWindow)
+        currentValue(\.fh, window: Self.fiveHourWindow).map(roundedPercent)
     }
 
     /// Weekly usage, or `nil` if that window has reset since the last sync.
     var weeklyPercent: Int? {
-        currentValue(\.sd, window: Self.weeklyWindow)
+        currentValue(\.sd, window: Self.weeklyWindow).map(roundedPercent)
     }
 
     /// Extra usage consumed, as a percent of the monthly limit.
     var extraUsagePercent: Double? {
-        latestSample?.u.xu
+        currentValue(\.xu, window: Self.monthlyWindow)
     }
 
     /// When the Claude app last recorded usage.
@@ -74,15 +86,23 @@ final class UsageDataService {
 
     // MARK: - Private
 
-    /// A sample older than its window is stale: the window has since reset.
+    /// Returns the value from the newest sample that reports it.
+    ///
+    /// Claude sometimes leaves a field out of a sample, so older samples are
+    /// searched too. A value older than its window is stale, because the
+    /// window has reset since it was recorded.
     private func currentValue(
-        _ keyPath: KeyPath<UsageValues, Int>,
+        _ keyPath: KeyPath<UsageValues, Double?>,
         window: TimeInterval
-    ) -> Int? {
-        guard let latestSample,
-              Date.now.timeIntervalSince(latestSample.date) < window
+    ) -> Double? {
+        guard let sample = samples.first(where: { $0.u[keyPath: keyPath] != nil }),
+              Date.now.timeIntervalSince(sample.date) < window
         else { return nil }
-        return latestSample.u[keyPath: keyPath]
+        return sample.u[keyPath: keyPath]
+    }
+
+    private func roundedPercent(_ value: Double) -> Int {
+        Int(value.rounded())
     }
 
     private func loadData() {
@@ -95,13 +115,14 @@ final class UsageDataService {
         do {
             let data = try Data(contentsOf: fileURL)
             let history = try JSONDecoder().decode(UsageHistory.self, from: data)
-            guard let newest = history.samples.max(by: { $0.t < $1.t }) else {
+            guard !history.samples.isEmpty else {
                 errorMessage = "No usage recorded yet."
                 return
             }
-            latestSample = newest
+            samples = history.samples.sorted { $0.t > $1.t }
             errorMessage = nil
         } catch {
+            logger.error("Could not decode usage file: \(error)")
             errorMessage = "Could not read the usage file."
         }
     }
