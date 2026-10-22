@@ -19,7 +19,7 @@ final class UsageDataService {
     private static let monthlyWindow: TimeInterval = 31 * 24 * 60 * 60
     private static let refreshInterval: TimeInterval = 60
 
-    /// Every sample in the file, newest first.
+    /// Samples from the current account, newest first.
     private(set) var samples: [UsageSample] = []
     /// A human-readable reason when the file cannot be read.
     private(set) var errorMessage: String?
@@ -115,11 +115,14 @@ final class UsageDataService {
         do {
             let data = try Data(contentsOf: fileURL)
             let history = try JSONDecoder().decode(UsageHistory.self, from: data)
-            guard !history.samples.isEmpty else {
+            let sorted = history.samples.sorted { $0.t > $1.t }
+            guard let newest = sorted.first else {
                 errorMessage = "No usage recorded yet."
                 return
             }
-            samples = history.samples.sorted { $0.t > $1.t }
+            // Claude keeps samples from accounts you signed out of, so only
+            // the account that recorded the newest sample is shown.
+            samples = sorted.filter { $0.org == newest.org }
             errorMessage = nil
         } catch {
             logger.error("Could not decode usage file: \(error)")

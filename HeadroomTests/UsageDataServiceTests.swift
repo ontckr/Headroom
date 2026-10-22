@@ -101,6 +101,63 @@ final class UsageDataServiceTests {
         #expect(service.weeklyPercent == 12)
     }
 
+    // MARK: - Switching accounts
+
+    @Test("Ignores values left over from a previous account")
+    func ignoresPreviousAccount() throws {
+        try write([
+            sample(#""fh":70,"sd":40,"xu":25"#, ageHours: 1, org: "old"),
+            sample(#""fh":5"#, org: "new"),
+        ])
+
+        let service = UsageDataService(fileURL: fileURL)
+
+        #expect(service.fiveHourPercent == 5)
+        #expect(service.weeklyPercent == nil)
+        #expect(service.extraUsagePercent == nil)
+    }
+
+    @Test("Shows the original account again after switching back")
+    func switchesBack() throws {
+        try write([
+            sample(#""fh":30,"sd":20,"xu":8"#, ageHours: 2, org: "first"),
+            sample(#""fh":70,"sd":60,"xu":50"#, ageHours: 1, org: "second"),
+            sample(#""fh":35,"sd":21"#, org: "first"),
+        ])
+
+        let service = UsageDataService(fileURL: fileURL)
+
+        #expect(service.fiveHourPercent == 35)
+        #expect(service.weeklyPercent == 21)
+        #expect(service.extraUsagePercent == 8)
+    }
+
+    @Test("Reads samples that have no account")
+    func samplesWithoutAccount() throws {
+        try write([
+            sample(#""fh":12,"sd":4,"xu":2"#, ageHours: 1, org: nil),
+            sample(#""fh":15,"sd":5"#, org: nil),
+        ])
+
+        let service = UsageDataService(fileURL: fileURL)
+
+        #expect(service.fiveHourPercent == 15)
+        #expect(service.extraUsagePercent == 2)
+    }
+
+    @Test("Switches to the new account while running")
+    func switchesWhileRunning() async throws {
+        let oldAccount = sample(#""fh":70,"sd":40,"xu":25"#, ageHours: 1, org: "old")
+        try write([oldAccount])
+        let service = UsageDataService(fileURL: fileURL)
+        #expect(service.extraUsagePercent == 25)
+
+        try write([oldAccount, sample(#""fh":3,"sd":1"#, org: "new")])
+
+        #expect(await waitUntil { service.fiveHourPercent == 3 })
+        #expect(service.extraUsagePercent == nil)
+    }
+
     // MARK: - Stale data
 
     @Test("Hides 5-hour usage once its window has passed")
@@ -159,9 +216,14 @@ final class UsageDataServiceTests {
 
     // MARK: - Helpers
 
-    private func sample(_ values: String, ageHours: Double = 0) -> String {
+    private func sample(
+        _ values: String,
+        ageHours: Double = 0,
+        org: String? = "test"
+    ) -> String {
         let seconds = Date.now.timeIntervalSince1970 - ageHours * 3600
-        return #"{"t":\#(Int64(seconds * 1000)),"org":"test","u":{\#(values)}}"#
+        let account = org.map { #""\#($0)""# } ?? "null"
+        return #"{"t":\#(Int64(seconds * 1000)),"org":\#(account),"u":{\#(values)}}"#
     }
 
     private func write(_ samples: [String], atomically: Bool = true) throws {

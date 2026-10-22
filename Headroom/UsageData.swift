@@ -8,6 +8,8 @@ struct UsageHistory: Decodable {
 /// A single usage snapshot recorded by the Claude desktop app.
 struct UsageSample: Decodable {
     let t: Int64
+    /// The Claude account the sample belongs to. Older files leave it empty.
+    let org: String?
     let u: UsageValues
 
     var date: Date {
