@@ -9,6 +9,13 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/ontckr/Headroom/releases/latest"><img src="https://img.shields.io/github/v/release/ontckr/Headroom" alt="Latest release"></a>
+  <a href="https://github.com/ontckr/Headroom/actions/workflows/ci.yml"><img src="https://github.com/ontckr/Headroom/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+  <img src="https://img.shields.io/badge/macOS-14%2B-blue" alt="macOS 14 or later">
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/ontckr/Headroom" alt="MIT license"></a>
+</p>
+
+<p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-dark.png">
     <img src="docs/screenshot-light.png" width="340" alt="Headroom showing 42% of the 5-hour limit and 18% of the weekly limit used">
@@ -26,28 +33,24 @@
 
 ## Install
 
-Paste this into Terminal:
+1. Download **Headroom.zip** from the
+   [latest release](https://github.com/ontckr/Headroom/releases/latest).
+2. Unzip it and drag `Headroom.app` into your Applications folder.
+3. Open it. Look for **✦** in your menu bar.
+
+Headroom is signed with a Developer ID and notarized by Apple, so it opens
+like any other app you download.
+
+<details>
+<summary><strong>Prefer Terminal?</strong></summary>
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ontckr/Headroom/main/install.sh | bash
 ```
 
-It downloads the latest release, moves `Headroom.app` into Applications, and
-opens it. Look for **✦** in your menu bar. You can read
-[the script](install.sh) first; it is about 20 lines.
-
-<details>
-<summary><strong>Prefer to install by hand?</strong></summary>
-
-1. Download `Headroom.zip` from the
-   [latest release](https://github.com/ontckr/Headroom/releases/latest).
-2. Unzip it and drag `Headroom.app` into your Applications folder.
-3. Open it. macOS will say it can't verify the developer, because Headroom is
-   not notarized by Apple. Click **Done**.
-4. Open **System Settings → Privacy & Security**, scroll down, and click
-   **Open Anyway** next to the message about Headroom.
-
-You only need to do this once.
+This downloads the latest release, moves it into Applications, and opens it.
+You can read [the script](install.sh) first; it is about 20 lines. Run it again
+any time to update.
 
 </details>
 
@@ -71,9 +74,9 @@ Claude login.
 
 ### Why is my number a little behind?
 
-The Claude app adds a new entry roughly every 5 to 30 minutes while you use
-it, so Headroom can trail the number Claude shows by a few points. The popover
-tells you when the data was last synced.
+The Claude app adds a new entry every few minutes while you use it, and less
+often when you don't, so Headroom can trail the number Claude shows by a few
+points. The popover tells you when the data was last synced.
 
 ### Why does a gauge show "–"?
 
@@ -93,11 +96,30 @@ make install
 
 | Command        | What it does                                    |
 | -------------- | ----------------------------------------------- |
+| `make test`    | Run the unit tests                              |
 | `make build`   | Build a universal release app into `build/`     |
 | `make run`     | Build and open it                               |
 | `make install` | Build and copy it to `/Applications`            |
-| `make zip`     | Build and package `build/Headroom.zip`          |
+| `make zip`     | Build and package an unsigned `build/Headroom.zip` |
 | `make clean`   | Remove build output                             |
+
+Builds from source are signed for your Mac only, so they run without an Apple
+Developer account.
+
+### Publishing a release
+
+Maintainers with a Developer ID certificate can produce a signed, notarized
+build. Store your notary credentials once:
+
+```bash
+xcrun notarytool store-credentials headroom --apple-id <apple-id> --team-id <team-id>
+```
+
+Then build, notarize, and package `build/release/Headroom.zip`:
+
+```bash
+TEAM_ID=<team-id> make release
+```
 
 ## Disclaimer
 

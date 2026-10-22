@@ -14,6 +14,9 @@
 		8A3000000000000000000005 /* UsageGaugeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2000000000000000000005 /* UsageGaugeView.swift */; };
 		8A3000000000000000000006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A2000000000000000000006 /* Assets.xcassets */; };
 		8A3000000000000000000007 /* LaunchAtLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2000000000000000000009 /* LaunchAtLogin.swift */; };
+		8A3000000000000000000008 /* UsageDataServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A200000000000000000000A /* UsageDataServiceTests.swift */; };
+		8A3000000000000000000009 /* UsageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2000000000000000000002 /* UsageData.swift */; };
+		8A300000000000000000000A /* UsageDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2000000000000000000003 /* UsageDataService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,10 +30,19 @@
 		8A2000000000000000000007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8A2000000000000000000008 /* Headroom.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Headroom.entitlements; sourceTree = "<group>"; };
 		8A2000000000000000000009 /* LaunchAtLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLogin.swift; sourceTree = "<group>"; };
+		8A1000000000000000000002 /* HeadroomTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HeadroomTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A200000000000000000000A /* UsageDataServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageDataServiceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		8A5000000000000000000003 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8A5000000000000000000005 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -44,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				8A4000000000000000000002 /* Headroom */,
+				8A4000000000000000000007 /* HeadroomTests */,
 				8A4000000000000000000006 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -68,8 +81,17 @@
 			isa = PBXGroup;
 			children = (
 				8A1000000000000000000001 /* Headroom.app */,
+				8A1000000000000000000002 /* HeadroomTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		8A4000000000000000000007 /* HeadroomTests */ = {
+			isa = PBXGroup;
+			children = (
+				8A200000000000000000000A /* UsageDataServiceTests.swift */,
+			);
+			path = HeadroomTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -92,6 +114,23 @@
 			productReference = 8A1000000000000000000001 /* Headroom.app */;
 			productType = "com.apple.product-type.application";
 		};
+		8A6000000000000000000002 /* HeadroomTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8A8000000000000000000003 /* Build configuration list for PBXNativeTarget "HeadroomTests" */;
+			buildPhases = (
+				8A5000000000000000000004 /* Sources */,
+				8A5000000000000000000005 /* Frameworks */,
+				8A5000000000000000000006 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HeadroomTests;
+			productName = HeadroomTests;
+			productReference = 8A1000000000000000000002 /* HeadroomTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -103,6 +142,9 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					8A6000000000000000000001 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					8A6000000000000000000002 = {
 						CreatedOnToolsVersion = 16.0;
 					};
 				};
@@ -121,6 +163,7 @@
 			projectRoot = "";
 			targets = (
 				8A6000000000000000000001 /* Headroom */,
+				8A6000000000000000000002 /* HeadroomTests */,
 			);
 		};
 /* End PBXProject section */
@@ -131,6 +174,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A3000000000000000000006 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8A5000000000000000000006 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,6 +197,16 @@
 				8A3000000000000000000003 /* UsageDataService.swift in Sources */,
 				8A3000000000000000000004 /* UsagePopoverView.swift in Sources */,
 				8A3000000000000000000005 /* UsageGaugeView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8A5000000000000000000004 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A3000000000000000000008 /* UsageDataServiceTests.swift in Sources */,
+				8A3000000000000000000009 /* UsageData.swift in Sources */,
+				8A300000000000000000000A /* UsageDataService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,6 +336,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Headroom/Headroom.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				ENABLE_HARDENED_RUNTIME = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -301,6 +362,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Headroom/Headroom.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				ENABLE_HARDENED_RUNTIME = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -315,6 +377,34 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.ontckr.Headroom;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		8A7000000000000000000005 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.ontckr.HeadroomTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		8A7000000000000000000006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.ontckr.HeadroomTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -336,6 +426,15 @@
 			buildConfigurations = (
 				8A7000000000000000000003 /* Debug */,
 				8A7000000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8A8000000000000000000003 /* Build configuration list for PBXNativeTarget "HeadroomTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8A7000000000000000000005 /* Debug */,
+				8A7000000000000000000006 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
